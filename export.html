@@ -12,10 +12,8 @@ DOCTYPE html>
     <link rel="stylesheet" href="css/foundation.min.css">
     <link href="css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/app.css" type="text/css">
-    <script async="" src="//www.google-analytics.com/analytics.js">
-    </script>
-    <script src="js/vendor/modernizr.js">
-    </script>
+    <script async="" src="//www.google-analytics.com/analytics.js"></script>
+    <script src="js/vendor/modernizr.js"></script>
 	
 	</head>
   <body>
@@ -26,19 +24,27 @@ DOCTYPE html>
 
 <!-- ngIf: isLoggedIn() -->
 <div class="contain-to-grid sticky ng-scope" ng-if="isLoggedIn()">
-	<nav class="top-bar" data-topbar="">
-		<ul class="title-area">
-			<li class="name">
-				<h1><a><i class="fa fa-ticket fa-lg"></i> My-Personal-Vudu-Movie-Library</a></h1>
-			</li>
-			<li class="toggle-topbar menu-icon"><a href="#" target="_self"></a></li>
-		</ul>
-		<section class="top-bar-section">
-			<ul class="right">
-				<li class="has-form"><a class="button alert" ng-click="logOut()">Sign Off</a></li>
-			</ul>
-		</section>
-	</nav>
+  <nav class="top-bar" data-topbar="">
+    <ul class="title-area">
+      <li class="name">
+        <h1>
+          <a>
+            <i class="fa fa-ticket fa-lg">
+            </i> My-Personal-vudu-Movie-Library</a>
+        </h1>
+      </li>
+      <li class="toggle-topbar menu-icon">
+        <a href="#" target="_self"></a>
+      </li>
+    </ul>
+    <section class="top-bar-section">
+      <ul class="right">
+        <li class="has-form">
+          <a class="button alert" ng-click="logOut()">Sign Off</a>
+        </li>
+      </ul>
+    </section>
+  </nav>
 </div>
 <!-- end ngIf: isLoggedIn() -->
 
@@ -50,12 +56,14 @@ DOCTYPE html>
 </header>
 	
 	<!-- ngView:  -->
-	<main role="main" ng-view="" class="ng-scope"><div class="row filter-row ng-scope">
+	<main role="main" ng-view="" class="ng-scope">
+		<div class="row filter-row ng-scope">
 	<div class="medium-4 columns">
 		
 		<div class="row collapse">
 			<div class="small-3 medium-4 columns">
-				<!-- ngIf: !query.length --><span class="prefix ng-scope ng-binding" ng-if="!query.length"> </span><!-- end ngIf: !query.length -->
+				<!-- ngIf: !query.length -->
+				<span class="prefix ng-scope ng-binding" ng-if="!query.length"> "" </span><!-- end ngIf: !query.length -->
 				<!-- ngIf: query.length -->
 			</div>
 			<div class="small-9 medium-8 columns">

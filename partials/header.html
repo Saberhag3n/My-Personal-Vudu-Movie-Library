@@ -4,16 +4,25 @@
 	<nav class="top-bar" data-topbar>
 		<ul class="title-area">
 			<li class="name">
-				<h1><a><i class="fa fa-ticket fa-lg"></i> Personal-VUDU-Movie-Library</a></h1>
-			</li>
-			<li class="toggle-topbar menu-icon"><a href="#" target="_self"></a></li>
-		</ul>
-		<section class="top-bar-section">
-			<ul class="right">
-				<li class="has-form"><a class="button alert" ng-click="logOut()">Sign Off</a></li>
-			</ul>
+        <h1>
+          <a>
+            <i class="fa fa-ticket fa-lg">
+            </i> My-Personal-vudu-Movie-Library</a>
+        </h1>
+      </li>
+      <li class="toggle-topbar menu-icon">
+        <a href="#" target="_self"></a>
+      </li>
+    </ul>
+    <section class="top-bar-section">
+      <ul class="right">
+        <li class="has-form">
+          <a class="button alert" ng-click="logOut()">Sign Off</a>
+        </li>
+      </ul>
 		</section>
 	</nav>
 </div>
 
-<progressbar class="root-progress" type="{{progress.type}}" value="progress.value" ng-if="isLoggedIn()"></progressbar>
+<progressbar class="root-progress" type="{{progress.type}}" value="progress.value" ng-if="isLoggedIn()">
+</progressbar>

@@ -4,20 +4,26 @@
     <thead>
       <tr>
         <th width="8%">id</th>
-        <th width="15%" ng-if="orderProp == 'studio.name'">Studio</th>
+        <!-- ngIf: orderProp == 'studio.name' -->
         <th>Title</th>
         <th width="8%">Year</th>
-        <th width="8%" ng-if="orderProp == 'mpaaRating'">MPAA</th>
+        <!-- <th width="8%">desription</th> -->
+        <th width="8%">MPAA Rating</th>
+        <!-- ngIf: orderProp == 'posterUrl' -->
         <th width="8%">Tomato</th>
+        <th width="8%">Video Quality</th>
         <!-- <th width="8%">Type</th> -->
         <th width="8%">UV?</th>
       </tr>
     </thead>
     <tbody>
       <tr ng-repeat="title in filtered.titles = (titles | filter:{title: query} | orderBy:orderProp)">
-        <td class="center"><a class="tiny button secondary expand radius" ng-click="vuduLink(title.contentId)">{{title.contentId}}</a></td>
+        <td class="center">
+          <a class="tiny button secondary expand radius" ng-click="vuduLink(title.contentId)">{{title.contentId}}</a>
+        </td>
         <td ng-if="orderProp == 'studio.name'">{{title.studio.name}}</td>
-        <td>{{title.title}}<br /></td>
+        <td>{{title.title}}<br />
+        </td>
         <td>{{title.releaseYear}}</td>
         <!-- <td>{{title.bestAvailVideoQuality | uppercase}}</td> -->
         <td ng-if="orderProp == 'mpaaRating'">{{title.mpaaRating | uppercase}}</td>

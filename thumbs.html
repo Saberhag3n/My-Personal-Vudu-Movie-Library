@@ -25,24 +25,31 @@
 
 <!-- ngIf: isLoggedIn() -->
 <div class="contain-to-grid sticky ng-scope" ng-if="isLoggedIn()">
-	<nav class="top-bar" data-topbar="">
-		<ul class="title-area">
-			<li class="name">
-				<h1><a><i class="fa fa-ticket fa-lg"></i> My-Personal-Vudu-Movie-Library</a></h1>
-			</li>
-			<li class="toggle-topbar menu-icon"><a href="#" target="_self"></a></li>
-		</ul>
-		<section class="top-bar-section">
-			<ul class="right">
-				<li class="has-form"><a class="button alert" ng-click="logOut()">Sign Off</a></li>
-			</ul>
-		</section>
-	</nav>
+  <nav class="top-bar" data-topbar="">
+    <ul class="title-area">
+      <li class="name">
+        <h1>
+          <a>
+            <i class="fa fa-ticket fa-lg">
+            </i> My-Personal-vudu-Movie-Library</a>
+        </h1>
+      </li>
+      <li class="toggle-topbar menu-icon">
+        <a href="#" target="_self"></a>
+      </li>
+    </ul>
+    <section class="top-bar-section">
+      <ul class="right">
+        <li class="has-form">
+          <a class="button alert" ng-click="logOut()">Sign Off</a>
+        </li>
+      </ul>
+    </section>
+  </nav>
 </div>
 <!-- end ngIf: isLoggedIn() -->
 
 <!-- ngIf: isLoggedIn() -->
-
 <div class="root-progress progress ng-isolate-scope success" ng-class="type" type="success" value="progress.value" ng-if="isLoggedIn()">
   <span class="meter" ng-transclude="" style="width: 100%;"></span>
 </div>
@@ -50,12 +57,14 @@
 </header>
 	
 	<!-- ngView:  -->
-	<main role="main" ng-view="" class="ng-scope"><div class="row filter-row ng-scope">
+	<main role="main" ng-view="" class="ng-scope">
+		<div class="row filter-row ng-scope">
 	<div class="medium-4 columns">
 		
 		<div class="row collapse">
 			<div class="small-3 medium-4 columns">
-				<!-- ngIf: !query.length --><span class="prefix ng-scope ng-binding" ng-if="!query.length">1511</span><!-- end ngIf: !query.length -->
+				<!-- ngIf: !query.length -->
+				<span class="prefix ng-scope ng-binding" ng-if="!query.length"> "" </span><!-- end ngIf: !query.length -->
 				<!-- ngIf: query.length -->
 			</div>
 			<div class="small-9 medium-8 columns">
@@ -113,10 +122,11 @@
 <!-- ngInclude: displayAs == 'thumbs' && 'partials/titles-view-thumbs.html' || displayAs == 'list' && 'partials/titles-view-list.html' || 'partials/titles-view-export.html' --><div class="row content-row ng-scope" ng-include="displayAs == 'thumbs' &amp;&amp; 'partials/titles-view-thumbs.html' || displayAs == 'list' &amp;&amp; 'partials/titles-view-list.html' || 'partials/titles-view-export.html'"><div class="columns ng-scope">
 
 	<ul class="small-block-grid-5 medium-block-grid-7 large-block-grid-9">
-		<!-- ngRepeat: title in filtered.titles = (titles | filter:{title: query} | orderBy:orderProp) | pageSlice:thumbs.pageNum:thumbs.pageSize --><li ng-repeat="title in filtered.titles = (titles | filter:{title: query} | orderBy:orderProp) | pageSlice:thumbs.pageNum:thumbs.pageSize" class="ng-scope">
+		<!-- ngRepeat: title in filtered.titles = (titles | filter:{title: query} | orderBy:orderProp) | pageSlice:thumbs.pageNum:thumbs.pageSize -->
+		<li ng-repeat="title in filtered.titles = (titles | filter:{title: query} | orderBy:orderProp) | pageSlice:thumbs.pageNum:thumbs.pageSize" class="ng-scope">
 			<div class="clearfix">				
-			</div>
-		</li><!-- end ngRepeat: title in filtered.titles = (titles | filter:{title: query} | orderBy:orderProp) | pageSlice:thumbs.pageNum:thumbs.pageSize -->
+		  </div>
+	  </li><!-- end ngRepeat: title in filtered.titles = (titles | filter:{title: query} | orderBy:orderProp) | pageSlice:thumbs.pageNum:thumbs.pageSize -->
 	</ul>
 	
 	<div class="pagination-centered">

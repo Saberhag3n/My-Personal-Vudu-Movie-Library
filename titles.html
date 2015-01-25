@@ -20,37 +20,44 @@
   </head>
   <body>
   
-  
+  <!-- ngInclude:  -->
   <header class="in-progress ng-scope" ng-controller="AppCtrl" ng-include="" src="'partials/header.html'">
-  
+    <!-- ngRepeat: alert in alerts -->
 
-
+<!-- ngIf: isLoggedIn() -->
 <div class="contain-to-grid sticky ng-scope" ng-if="isLoggedIn()">
   <nav class="top-bar" data-topbar="">
     <ul class="title-area">
       <li class="name">
-        <h1><a><i class="fa fa-ticket fa-lg"></i> My-Personal-vudu-Movie-Library</a></h1>
+        <h1>
+          <a>
+            <i class="fa fa-ticket fa-lg">
+            </i> My-Personal-vudu-Movie-Library</a>
+        </h1>
       </li>
-      <li class="toggle-topbar menu-icon"><a href="#" target="_self"></a></li>
+      <li class="toggle-topbar menu-icon">
+        <a href="#" target="_self"></a>
+      </li>
     </ul>
     <section class="top-bar-section">
       <ul class="right">
-        <li class="has-form"><a class="button alert" ng-click="logOut()">Sign Off</a></li>
+        <li class="has-form">
+          <a class="button alert" ng-click="logOut()">Sign Off</a>
+        </li>
       </ul>
     </section>
   </nav>
 </div>
+<!-- end ngIf: isLoggedIn() -->
 
-
-
+<!-- ngIf: isLoggedIn() -->
 <div class="root-progress progress ng-isolate-scope success" ng-class="type" type="success" value="progress.value" ng-if="isLoggedIn()">
   <span class="meter" ng-transclude="" style="width: 100%;"></span>
 </div>
-
-
+<!-- end ngIf: isLoggedIn() -->
 </header>
   
-  
+  <!-- ngView:  -->  
   <main role="main" ng-view="" class="ng-scope">
  <div class="row filter-row ng-scope" style="
     width: 1100px;
@@ -60,7 +67,7 @@
     <div class="row collapse">
       <div class="small-3 medium-4 columns">
         
-        <span class="prefix ng-scope ng-binding" ng-if="!query.length">1511</span
+        <span class="prefix ng-scope ng-binding" ng-if="!query.length"> "" </span
         >
         
        
@@ -148,18 +155,22 @@
       <tr ng-repeat="title in filtered.titles = (titles | filter:{title: query} | orderBy:orderProp)" class="ng-scope" style="
     height: 57px;
 ">
-        <td class="center"><a class="tiny button secondary expand radius ng-binding" ng-click="vuduLink(title.contentId)"> </a></td>
+        <td class="center">
+          <a class="tiny button secondary expand radius ng-binding" ng-click="vuduLink(title.contentId)"> </a>
+      </td>
         <!-- ngIf: orderProp == 'studio.name' -->
         <td class="ng-binding" style="
     width: 720px;
     padding-left:20px;
-"> <br></td>
+"> <br>
+      </td>
         <td class="center ng-binding"> </td>
         <td class="center ng-binding"> </td>
         <td class="center ng-binding"> </td>
         <!-- <td>{{title.type}}</td> -->
         <td class="center ng-binding"> </td>
-        <td class="uv center ng-binding" ng-class="{'is-uv': title.isUV}"> </td>
+        <td class="uv center ng-binding" ng-class="{'is-uv': title.isUV}"> 
+      </td>
       
     </tbody>
   </table>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" ng-app="app">
+<head>
+	<style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}
+	</style>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="icon" type="image/x-icon" href="images/app_favicon.jpg">
+		<title>Personal-Vudu-Movie-Library</title>
+		<link rel="stylesheet" href="css/normalize.css">
+		<link rel="stylesheet" href="css/foundation.min.css">
+		<link href="css/font-awesome.css" rel="stylesheet">
+		<link rel="stylesheet" href="css/app.css" type="text/css">
+		<script async="" src="www.google-analytics.com/analytics.js"></script>
+		<script src="js/vendor/modernizr.js"></script>
+	
+	</head>
+	<body>
+
+		<body>
+	
+	<!-- ngInclude:  -->
+	<header class="in-progress ng-scope" ng-controller="AppCtrl" ng-include="" src="'partials/header.html'"><!-- ngRepeat: alert in alerts -->
+
+<!-- ngIf: isLoggedIn() -->
+
+<!-- ngIf: isLoggedIn() -->
+</header>
+	
+	<!-- ngView:  -->
+	<main role="main" ng-view="" class="ng-scope"><div class="row ng-scope">
+	<div class="medium-8 large-6 small-centered columns">
+		<form name="userForm" ng-submit="logIn()" class="ng-pristine ng-invalid ng-invalid-required" abineguid="6FC3D4D70B87410E80A05DD2B3EDDA50" pb-autologin="true" autocomplete="off">
+			<fieldset>
+				<legend style="
+    height: 50px;
+    width: 150px;
+">VUDU</legend>
+				
+				<div class="row">
+					<div class="columns">
+						<label>
+							<input name="userName" type="email" placeholder="Email" required="" ng-model="user.userName" class="ng-valid-email ng-dirty ng-invalid ng-invalid-required" pb-role="username">
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="columns">
+						<label>
+							<input name="password" type="password" placeholder="Password" required="" ng-model="user.password" ng-minlength="8" class="ng-valid-minlength ng-dirty ng-invalid ng-invalid-required" pb-role="password">
+						</label>
+                        <!-- <small class="error" ng-show="false">Invalid entry</small> -->						
+					</div>
+				</div>
+				
+				<button type="submit" class="button radius expand" ng-disabled="userForm.$invalid" pb-role="submit" disabled="disabled">Sign in</button>
+				<!-- ngIf: error -->
+			</fieldset>
+		</form>
+	</div>
+</div>
+
+<div class="row ng-scope">
+	<div class="medium-8 large-6 small-centered columns">
+		<section class="panel">
+			<h3>My-Personal-Vudu-Movie-Library</h3>
+			<p>This is a simple service created to list your movies from <a href="http://vudu.com" target="_blank">vudu.com</a>.</p>
+			<p>Your email and password are not stored or sent anywhere other than to VUDU's servers and are only used to request permission to view your titles. All the resulting data is sent directly from VUDU to your browser.</p>
+			<p>This is a JavaScript and HTML based application that lives in your browser. You can use the standard features of your modern browsers to view all the source code and network traffic if you're inclined. I'll post to github in a couple days as well but I need to do some therapeutic refactoring first.</p>
+			<p>Please send me a <a href="https://forum.vudu.com/member.php?298091-FattyMoBookyButt" target="_blank">direct message</a> on VUDU's forums or post a new message on the <a href="https://forum.vudu.com/showthread.php?931841-Direct-to-Digital-list-and-other-utilities-(Error-Tracker-Redemption-Log)" target="_blank">Disc to Digital Title List</a> thread if you have any feedback.</p>
+			<!-- <p>With that being said, I am expressing no warranty of security or prevention of odoriferous actions that could happen to you today, tomorrow or when you are sixty-four.</p> -->
+			<!-- <p>Enjoy,<br /> -->
+			<!-- <em>Mr. FattyMoBookyButt</em></p> -->
+		</section>
+	</div>
+</div></main>
+	
+	<footer>
+		<div class="row">
+			<div class="small-12 columns">© 2014 FattyMoBookyButt</div>
+		</div>
+	</footer>
+</body>
+	
+	<!-- <script src="ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script> -->
+	<script src="lib/angular/angular.js" type="text/javascript"></script>
+	<script src="lib/angular/angular-route.js"></script>
+	<script src="lib/angular/angular-cookies.js"></script>
+	<script src="js/app.js"></script>
+	<script src="js/services.js"></script>
+	<script src="js/controllers.js"></script>
+	
+	
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		
+		ga('create', 'UA-48861447-1');
+		// ga('send', 'pageview');
+	</script>
+	
+	
+
+</body></html>

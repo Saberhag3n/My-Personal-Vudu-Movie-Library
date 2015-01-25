@@ -1,15 +1,21 @@
 <!DOCTYPE: html>
-<html class="no-js" lang="en" ng-app="app"><head><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}</style>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="icon" type="image/x-icon" href="images/app_favicon.jpg">
-		<title>Personal-Vudu-Movie-Library</title>
-		<link rel="stylesheet" href="css/normalize.css">
-		<link rel="stylesheet" href="css/foundation.min.css">
-		<link href="css/font-awesome.css" rel="stylesheet">
-		<link rel="stylesheet" href="css/app.css" type="text/css">
-		<script async="" src="//www.google-analytics.com/analytics.js"></script>
-		<script src="js/vendor/modernizr.js"></script>
+DOCTYPE html>
+<html class="no-js" lang="en" ng-app="app">
+<head>
+  <style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}
+  </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="images/app_favicon.jpg">
+    <title>Personal-Vudu-Movie-Library</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/foundation.min.css">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/app.css" type="text/css">
+    <script async="" src="//www.google-analytics.com/analytics.js">
+    </script>
+    <script src="js/vendor/modernizr.js">
+    </script>
 	
 	</head>
   <body>
@@ -64,13 +70,31 @@
 	</div>
 	<div class="medium-4 columns">
 		<div class="button-bar">
-			<ul class="layout-button-group button-group radius even-3">
-				<li><button type="button" class="tiny button ng-valid ng-dirty active" ng-model="displayAs" btn-radio="'thumbs'"><i class="fa fa-th fa-lg"></i><!-- thumbs --></button></li>
-				<li><button type="button" class="tiny button ng-valid ng-dirty" ng-model="displayAs" btn-radio="'titles'"><i class="fa fa-list fa-lg"></i><!-- list --></button></li>
-				<li><button type="button" class="tiny button ng-valid ng-dirty" ng-model="displayAs" btn-radio="'export'"><i class="fa fa-download fa-lg"></i><!-- csv --></button></li>
-			</ul>
-		</div>
-	</div>
+      <ul class="layout-button-group button-group radius even-3">
+        <li>
+          <button type="button" class="tiny button ng-valid ng-dirty active" ng-model="displayAs" btn-radio="'thumbs'">
+            <i class="fa fa-th fa-lg">
+            </i>
+            <!-- thumbs -->
+          </button>
+        </li>
+        <li>
+          <button type="button" class="tiny button ng-valid ng-dirty" ng-model="displayAs" btn-radio="'titles'">
+            <i class="fa fa-list fa-lg">
+            </i>
+            <!-- list -->
+          </button>
+        </li>
+        <li>
+          <button type="button" class="tiny button ng-valid ng-dirty" ng-model="displayAs" btn-radio="'export'">
+            <i class="fa fa-download fa-lg">
+            </i>
+            <!-- csv -->
+           </button>
+        </li>
+      </ul>
+    </div>
+  </div>
 	<div class="medium-4 columns">
 		<select ng-model="orderProp" class="ng-pristine ng-valid">
 			 <option value="">Date Acquired</option>

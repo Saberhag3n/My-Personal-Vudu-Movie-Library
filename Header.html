@@ -1,0 +1,23 @@
+<!-- ngIf: isLoggedIn() -->
+<div class="contain-to-grid sticky ng-scope" ng-if="isLoggedIn()">
+	<nav class="top-bar" data-topbar="">
+		<ul class="title-area">
+			<li class="name">
+				<h1><a><i class="fa fa-ticket fa-lg" src="images/Strip.jpg"></i> My-Personal-vudu-collection</a></h1>
+			</li>
+			<li class="toggle-topbar menu-icon"><a href="#" target="_self"></a></li>
+		</ul>
+		<section class="top-bar-section">
+			<ul class="right">
+				<li class="has-form"><a class="button alert" ng-click="logOut()">Sign Off</a></li>
+			</ul>
+		</section>
+	</nav>
+</div>
+<!-- end ngIf: isLoggedIn() -->
+
+<!-- ngIf: isLoggedIn() -->
+<div class="root-progress progress ng-isolate-scope success" ng-class="type" type="success" value="progress.value" ng-if="isLoggedIn()">
+  <span class="meter" ng-transclude="" style="width: 100%;"></span>
+</div>
+<!-- end ngIf: isLoggedIn() -->

@@ -1,75 +1,22 @@
 'use strict';
 
 angular.module('app.services', []).
-  // config(['$httpProvider', function($httpProvider) {
-  //  $httpProvider.interceptors.push(['$q', function($q) {
-  //    
-  //    return {
-  //      response: function (response) {
-  //        console.log('INTERCEPTOR:response');
-  //        console.log('response: ', response);
-  //        return response;
-  //      },
-  //      responseError: function (response) {
-  //        console.log('INTERCEPTOR:responseError');
-  //        return $q.reject(response);
-  //      }
-  //    };
-  //    
-  //    
-  //    
-  //    // return function(promise) {
-  //    //  return promise.then(function(response) {
-  //    // 
-  //    //    console.log('');
-  //    //    console.log('Interceptor');
-  //    //    console.log('response: ', response);
-  //    //    console.log('response.data: ', response.data);
-  //    // 
-  //    //    if(response.data._type && response.data._type == "sessionKeyResponse") {
-  //    //      if(response.data.status && response.data.status[0] == "loginFailed"){
-  //    //        response.data = { 
-  //    //          error: true, 
-  //    //          description: 'Login failed'
-  //    //        };
-  //    //        return $q.reject(response);
-  //    //      }
-  //    //    }
-  //    // 
-  //    // 
-  //    //    return response; 
-  //    //  }, function(response) {
-  //    //    if (response.data._type === "error") {
-  //    //      console.log('ERROR ON HTTPs');
-  //    //      // HTTP 401 Error: 
-  //    //      // The request requires user authentication
-  //    //      // response.data = { 
-  //    //      //  status: false, 
-  //    //      //  description: 'Authentication required!'
-  //    //      // };
-  //    //      return response;
-  //    //    }
-  //    //    return $q.reject(response);
-  //    //  });
-  //    // }
-  //  }]);
-  // }]).
-
   factory('alertService', function() {
     var alerts = [];
-    
+
     var clear = function() {
       alerts.splice(0, alerts.length);
     };
-    
+
     var close = function(index) {
       alerts.splice(index, 1);
     };
+
     var push = function(msg, type){
       type = type || 'success';
       alerts.push({type: type, msg: msg});
     };
-    
+
     return {
       alerts: alerts
       , clear: clear
@@ -77,199 +24,357 @@ angular.module('app.services', []).
       , push: push
     }
   }).
+/*
+  factory('RequestManager', function(){
+    var manager = {
+      limit: 50,
+      queue: [],
+      cache: {},
+      requests: 0,
+      sendRequest: function(params){
+        if(manager.requests < manager.limit)
+        {
+          manager.runRequest(params);
+        }
+        else
+        {
+          manager.queue.push(params);
+        }
+      },
+      runRequest: function(params){
+        manager.requests++;
 
+        $http.jsonp(url, {params: params
+
+            manager.cache[ TODO ] = copy.deepcopy(conn) #use deepcopy to make sure the value is not overwritten in the $scope
+            runNextRequest();
+          }, function(error){
+          runNextRequest();
+        });
+      },
+      runNextRequest: function(){
+        if(manager.requests > 0){
+          manager.requests--;
+          if(queue.length > 0){
+            manager.runRequest(queue.shift());
+          }
+        }
+      }
+    }
+    return manager;
+  )}.
+*/
   factory('progressService', function() {
     var value = 0;
     var type = 'success';
-    
+
     var reset = function() {
       this.value = 0;
       this.type = 'success';
     };
-    
+
     return {
       value: value
       , type: type
       , reset: reset
     }
   }).
-  
+
   factory('vuduFactory', function($http, $q, $cookieStore, $timeout) {
-    // console.log('');
-    // console.group('vuduFactory');
-    
     var url = 'https://api.vudu.com/api2/';
+    var cachedurl = "http://apicache.vudu.com/api2/";
+    var appId = 'fmbb-vudu-collection';
     var count = 100;
     var user = null;
-    
+    var videoQualityList = {"sd": 0, "hd": 1, "hdx": 2, "uhd": 3};
+		
     var isAuthenticated = function() {
-      // console.log('');
-      // console.group('isAuthenticated');
-      
-      // console.log('user: ', user);
-      
-      // if(!user && $cookieStore.get('ffmbVuduCollection_id') && $cookieStore.get('ffmbVuduCollection_expirationTime') && $cookieStore.get('ffmbVuduCollection_sessionKey')){
-      //   user = {
-      //     id: $cookieStore.get('ffmbVuduCollection_id'),
-      //     expirationTime: $cookieStore.get('ffmbVuduCollection_expirationTime'),
-      //     sessionKey: $cookieStore.get('ffmbVuduCollection_sessionKey')
-      //   }
-      // }
-      
-      // console.groupEnd();
-      
-      return (user && user.sessionKey && user.id) ? true : false;
+      return user && user.sessionKey && user.id;
     };
-    
-    var sessionKeyRequest = function(userName, password) {
-      // console.log('');
-      // console.group('vuduFactory.sessionKeyRequest()');
-      
-      return $http.jsonp(url, { 
+
+var sessionKeyRequest = function(userName, password, loginType, sensor_data, userId, sessionKey)
+{
+	var params = {
+		claimedAppId: appId,
+		format: 'application/json',
+		callback: 'JSON_CALLBACK',
+		_type: loginType == "wmt" ? "linkedAccountSessionKeyRequest" : 'sessionKeyRequest',
+		followup: 'user',
+		password: password,
+		sensorData: sensor_data,
+		userName: userName,
+		weakSeconds: "25920000"
+	};
+//console.log(params);
+	if(loginType == "wmt")
+	{
+		params.oauthClientId = "wmt";
+	}
+	return $http.jsonp(url, {params: params}).then(function(response) {
+	if(response.data && response.data.status)
+	{
+		if(response.data.status[0] == 'success')
+		{
+			user = {
+				id: response.data.sessionKey[0].userId[0],
+				expirationTime: response.data.sessionKey[0].expirationTime[0],
+				sessionKey: response.data.sessionKey[0].sessionKey[0]
+			};
+		}
+		else if(userId && sessionKey)
+		{
+			user = {
+				id: userId,
+				//expirationTime: response.data.sessionKey[0].expirationTime[0],
+				sessionKey: sessionKey
+			}
+			return true;
+		}
+		else if(response.data.status[0] == 'loginFailed')
+		{
+			console.log('loginFailed: reject it');
+			response.data = { 
+				error: true, 
+				message: 'Login failed',
+				status: response.data.status[0]
+			};
+			return $q.reject(response);
+		}
+	}
+	return response || $q.when(response);
+	}, function(response) {
+		console.log('vuduFactory.sessionKeyRequest():failure:response');
+		console.log('response: ', response);
+		return response;
+	}, function(response) {
+		console.log('vuduFactory.sessionKeyRequest():notify');
+		console.log('response: ', response);
+		return response;
+	});
+}
+		
+		var signOut = function() {
+			var deferred = $q.defer();
+			user = null;
+			$cookieStore.remove('ffmbVuduCollection_id');
+			$cookieStore.remove('ffmbVuduCollection_expirationTime');
+			$cookieStore.remove('ffmbVuduCollection_sessionKey');
+			
+			$timeout(function() {
+				deferred.resolve({status: 'success', message: 'Signed out'});
+			}, 100);
+			return deferred.promise;
+		};
+
+		var getWishList = function(page, contentVariants) {
+			return $http.jsonp(url, { 
+				params: {
+					claimedAppId: appId,
+					format: 'application/json',
+//contentEncoding=gzip
+					_type: 'contentSearch',
+					count: count,
+					dimensionality: 'any',
+					followup: ['usefulStreamableOffers', 'ratingsSummaries', 'promoTags', 'advertEnabled', 'totalCount'],
+					groupBy: 'series',
+					listType: 'wished',//'rentedOrOwned'
+					offset: page * count,
+					sessionKey: user.sessionKey,
+					sortBy: 'title',
+					//superType: 'tv',
+					type: ['program', 'episode', 'season', 'bundle', 'series'],
+					userId: user.id,
+					callback: 'JSON_CALLBACK'
+				}
+			}).then(function(response) {
+				return parseVuduResponse(response, contentVariants);
+			}, function(response) {
+				console.log('vuduFactory.getWishList():failure:');
+				console.log('response: ', response);
+			}, function(response) {
+				console.log('vuduFactory.getWishList():notify:');
+				console.log('response: ', response);
+			});
+		};
+
+		var getTVOwned = function(page, contentVariants) {
+			return $http.jsonp(url, { 
+				params: {
+					claimedAppId: appId,
+					format: 'application/json',
+					_type: 'contentSearch',
+					count: count,
+					dimensionality: 'any',
+					followup: ['usefulStreamableOffers', 'ratingsSummaries', 'totalCount'],
+					groupBy: 'series',
+					listType: 'owned',//'rentedOrOwned'
+					offset: page * count,
+					sessionKey: user.sessionKey,
+					sortBy: '-purchaseTime',
+					superType: 'tv',
+					type: ['episode', 'season', 'bundle', 'series'],
+					userId: user.id,
+					callback: 'JSON_CALLBACK'
+				}
+			}).then(function(response) {
+				return parseVuduResponse(response, contentVariants);
+			}, function(response) {
+				console.log('vuduFactory.getTVOwned():failure:');
+				console.log('response: ', response);
+			}, function(response) {
+				console.log('vuduFactory.getTVOwned():notify:');
+				console.log('response: ', response);
+			});
+		};
+
+		var getTitlesOwned = function(page, contentVariants) {
+			return $http.jsonp(url, { 
+				params: {
+					claimedAppId: appId,
+					format: 'application/json',
+					_type: 'contentSearch',
+					count: count,
+					dimensionality: 'any',
+					followup: ['usefulStreamableOffers', 'ratingsSummaries', 'totalCount'],
+					listType: 'owned',//'rentedOrOwned'
+					offset: page * count,
+					sessionKey: user.sessionKey,
+					sortBy: '-purchaseTime',
+					superType: 'movies',
+					type: ['program', 'bundle'],
+					userId: user.id,
+					callback: 'JSON_CALLBACK'
+				}
+			}).then(function(response) {
+				return parseVuduResponse(response, contentVariants);
+			}, function(response) {
+				console.log('vuduFactory.getTitlesOwned():failure:');
+				console.log('response: ', response);
+			}, function(response) {
+				console.log('vuduFactory.getTitlesOwned():notify:');
+				console.log('response: ', response);
+			});
+		};
+
+		var getContentVariantsOwned = function(page) {
+			return $http.jsonp(url, { 
+				params: {
+					claimedAppId: appId,
+					format: 'application/json',
+					_type: 'contentVariantSearch',
+					count: 1000,
+					dimensionality: 'any',
+					followup: ['videoQuality', 'totalCount'],
+					listType: 'owned',//'rentedOrOwned'
+					offset: page * 1000,
+					responseSubset: 'micro',
+					sessionKey: user.sessionKey,
+					userId: user.id,
+					callback: 'JSON_CALLBACK'
+				}
+			}).then(function(response) {
+				return parseVuduResponse(response, null);
+			}, function(response) {
+				console.log('vuduFactory.getContentVariantsOwned():failure:');
+				console.log('response: ', response);
+			}, function(response) {
+				console.log('vuduFactory.getContentVariantsOwned():notify:');
+				console.log('response: ', response);
+			});
+		};
+
+
+    var getSeriesSeasons = function(item, offset, contentVariants) {
+      return $http.jsonp(cachedurl, { 
         params: {
-          claimedAppId: 'fmbb-vudu-collection',
-          format: 'application/json',
-          callback: 'JSON_CALLBACK',
-          _type: 'sessionKeyRequest',
-          followup: 'user',
-          password: password,
-          userName: userName
-        }
-      }).then(function(response) {
-        // console.log('vuduFactory.sessionKeyRequest():success');
-        // console.log('response: ', response);
-        
-        if(response.data && response.data.status){
-          if(response.data.status[0] == 'success'){
-            // console.log('loginSuccess: set it');
-            
-            user = {
-              id: response.data.sessionKey[0].userId[0],
-              expirationTime: response.data.sessionKey[0].expirationTime[0],
-              sessionKey: response.data.sessionKey[0].sessionKey[0]
-            }
-            // console.log('user: ', user);
-            
-            // $cookieStore.put('ffmbVuduCollection_id', user.id);
-            // $cookieStore.put('ffmbVuduCollection_expirationTime', user.expirationTime);
-            // $cookieStore.put('ffmbVuduCollection_sessionKey', user.sessionKey);
-            
-          } else if(response.data.status[0] == 'loginFailed'){
-            console.log('loginFailed: reject it');
-            
-            response.data = { 
-              error: true, 
-              message: 'Login failed',
-              status: response.data.status[0]
-            };
-            
-            return $q.reject(response);
-          }
-        }
-        
-        return response || $q.when(response);
-      }, function(response) {
-        console.log('vuduFactory.sessionKeyRequest():failure:response');
+					claimedAppId: appId,
+					format: 'application/json',
+					_type: 'contentSearch',
+					followup: ['promoTags', 'ratingsSummaries', 'totalCount'],
+					includeComingSoon: true,
+					listType: 'useful',
+					offset: offset,
+					//responseSubset: 'micro',
+					seriesId: item.contentId,
+					sortBy: 'seasonNumber',
+					type: 'season',
+					callback: 'JSON_CALLBACK'
+				}
+			}).then(function(response) {
+        return parseVuduResponse(response, contentVariants);
+			}, function(response) {
+        console.log('vuduFactory.getSeriesSeasons():failure:');
         console.log('response: ', response);
-        return response;
-      }, function(response) {
-        console.log('vuduFactory.sessionKeyRequest():notify');
+			}, function(response) {
+        console.log('vuduFactory.getSeriesSeasons():notify:');
         console.log('response: ', response);
-        return response;
       });
-      
-      // console.groupEnd();
-    }
-    
-    var signOut = function() {
-      // console.log('');
-      // console.group('vuduFactory.signOut()');
-      
-      var deferred = $q.defer();
-      
-      // $timeout(function() {
-      //  deferred.notify('About to sign out');
-      // }, 0);
-      
-      user = null;
-      $cookieStore.remove('ffmbVuduCollection_id');
-      $cookieStore.remove('ffmbVuduCollection_expirationTime');
-      $cookieStore.remove('ffmbVuduCollection_sessionKey');
-      
-      $timeout(function() {
-        deferred.resolve({status: 'success', message: 'Signed out'});
-      }, 100);
-      
-      // console.groupEnd();
-      
-      return deferred.promise;
     };
-    
-    var getTitlesOwned = function(page) {
-      return $http.jsonp(url, { 
+
+//contentEncoding/gzip/
+
+    var getSeasonEpisodes = function(item, contentVariants) {
+      return $http.jsonp(cachedurl, {
         params: {
-          claimedAppId: 'fmbb-vudu-collection',
-          format: 'application/json',
-          _type: 'contentSearch',
-          count: count,
-          dimensionality: 'any',
-          followup: ['ratingsSummaries', 'totalCount'],
-          listType: 'rentedOrOwned',
-          offset: page * count,
-          sessionKey: user.sessionKey,
-          sortBy: '-purchaseTime',
-          superType: 'movies',
-          type: ['program', 'bundle'],
-          userId: user.id,
-          callback: 'JSON_CALLBACK'
-        }
-      }).then(function(response) {
-        // console.log('');
-        // console.group('vuduFactory.getTitlesOwned():success');
-        // console.log('response: ', response);
-        // console.groupEnd();
-        
-        return parseVuduResponse(response);
-        
-      }, function(response) {
-        console.log('vuduFactory.getTitlesOwned():failure:');
+					claimedAppId: appId,
+					format: 'application/json',
+					_type: 'contentSearch',
+					count: 100,//
+					followup: ['ratingsSummaries', 'usefulStreamableOffers', 'totalCount'],//
+					includeComingSoon: true,
+					listType: 'useful',
+					seasonId: item.contentId,
+					sortBy: 'episodeNumberInSeason',
+					callback: 'JSON_CALLBACK'
+				}
+			}).then(function(response) {
+        return parseVuduResponse(response, contentVariants);
+			}, function(response) {
+        console.log('vuduFactory.getSeasonEpisodes():failure:');
         console.log('response: ', response);
-      }, function(response) {
-        console.log('vuduFactory.getTitlesOwned():notify:');
+			}, function(response) {
+        console.log('vuduFactory.getSeasonEpisodes():notify:');
         console.log('response: ', response);
       });
     };
-    
-    var parseVuduType = function(data) {
-      // console.log('');
-      // console.group('vuduFactory.parseVuduType()');
-      // console.log('data', data);
-      
+
+    var getBundledTitles = function(item, contentVariants) {
+      return $http.jsonp(cachedurl, { 
+        params: {
+					claimedAppId: appId,
+					format: 'application/json',
+					_type: 'contentSearch',
+					containerId: item.contentId,
+					count: 100,//
+					depthMax: 1,
+					followup: ['promoTags', 'ratingsSummaries', 'totalCount'],
+					listType: 'useful',
+					offset: 0,
+					callback: 'JSON_CALLBACK'
+				}
+			}).then(function(response) {
+        return parseVuduResponse(response, contentVariants);
+			}, function(response) {
+        console.log('vuduFactory.getBundledTitles():failure:');
+        console.log('response: ', response);
+			}, function(response) {
+        console.log('vuduFactory.getBundledTitles():notify:');
+        console.log('response: ', response);
+      });
+    };
+
+    var parseFirstVuduKey = function(data, key) {
+      return data[key] && data[key][0];
+    };
+
+    var parseVuduType = function(data, contentVariants) {
       var item = {};
       
-      // if(angular.isArray(data)){
-      //   
-      //   if(angular.isObject(data[0])){
-      //     item = parseVuduType(data[0]);
-      //   } else if(data.length == 1){
-      //     item = data[0];
-      //   } else {
-      //     item = data;
-      //   }
-      //   
-      // } else if(angular.isObject(data)){
-      //   angular.forEach(data, function(value, key) {
-      //     item[key] = parseVuduType(value);
-      //   });
-      // } else if(angular.isString(data)){
-      //   item = data;
-      // }
-      
       if(data._type == 'content'){
-        
         // if(!data.contentId || !data.contentId[0]) console.log('NOFIND: data.contentId');
         // if(!data.title || !data.title[0]) console.log('NOFIND: data.title');
         // if(!data.description || !data.description[0]) console.log('NOFIND: data.description');
+        // if(!data.cast&Crew || !data,cast&Crew[0]) console.log('NOFIND: data.cast&Crew');
         // if(!data.bestDashVideoQuality || !data.bestDashVideoQuality[0]) console.log('NOFIND: data.bestDashVideoQuality');
         // if(!data.country || !data.country[0]) console.log('NOFIND: data.country');
         // if(!data.distributionStudio || !data.distributionStudio[0]) console.log('NOFIND: data.distributionStudio');
@@ -286,36 +391,55 @@ angular.module('app.services', []).
         // if(!data.tomatoMeter || !data.tomatoMeter[0]) console.log('NOFIND: data.tomatoMeter');
         // if(!data.type || !data.type[0]) console.log('NOFIND: data.type');
         // if(!data.ultraVioletLogicalAssetId || !data.ultraVioletLogicalAssetId[0]) console.log('NOFIND: data.ultraVioletLogicalAssetId');
-        
+        var contentId = data.contentId[0];
+
         item = {
           _type: data._type,
           
-          contentId: data.contentId[0],
-          title: data.title[0],
-          description: data.description[0],
-          
-          bestAvailVideoQuality: data.bestDashVideoQuality ? data.bestDashVideoQuality[0] : null,
+          contentId: contentId,
+          title: data.title && data.title[0],
+          description: data.description && data.description[0],
+          cast&Crew: data.cast&Crew && data.cast&Crew[0],
+          bestAvailVideoQuality: data.bestStreamableVideoQuality ? data.bestStreamableVideoQuality[0] : null,
+//data.bestDashVideoQuality ? data.bestDashVideoQuality[0] : null,
+//bestStreamableVideoQuality
           country: data.country ? data.country[0] : null,
-          distributionStudio: data.distributionStudio ? parseVuduType(data.distributionStudio[0]) : null,
+          genres: data.genres ? data.genres[0] : null,
           language: data.language ? data.language[0] : null,
           lengthSeconds: data.lengthSeconds ? data.lengthSeconds[0] : null,
           mpaaRating: data.mpaaRating ? data.mpaaRating[0] : null,
           placardUrl: data.placardUrl ? data.placardUrl[0] : null,
           posterCopyright: data.posterCopyright ? data.posterCopyright[0] : null,
           posterUrl: data.posterUrl ? data.posterUrl[0] : null,
-          ratingsSummaries: data.ratingsSummaries ? parseVuduType(data.ratingsSummaries[0]) : null,
           releaseTime: data.releaseTime ? data.releaseTime[0] : null,
           starRating: data.starRating ? data.starRating[0] : 0,
-          studio: data.studio ? parseVuduType(data.studio[0]) : null,
+          studio: data.studio ? parseVuduType(data.studio[0], null) : null,
           tomatoMeter: data.tomatoMeter ? +data.tomatoMeter[0] : 0,
           type: data.type ? data.type[0] : null,
-          isUV: data.ultraVioletLogicalAssetId && data.ultraVioletLogicalAssetId[0] ? true : false,
+          haveUV: data.ultraVioletSyncStatus && data.ultraVioletSyncStatus[0],//"imported","exported"
+          hasUV: data.ultraVioletLogicalAssetId && data.ultraVioletLogicalAssetId[0],
+          // ultraVioletLogicalAssetId: data.ultraVioletLogicalAssetId ? data.ultraVioletLogicalAssetId[0] : null,
+          // ultraVioletSyncStatus: data.ultraVioletSyncStatus ? data.ultraVioletSyncStatus[0] : null
+          isMA: data.keyChestMaEditionUmid && data.keyChestMaEditionUmid[0] ? "MA" : null,
+//ptoKeyChestEligible//ptoKeyChestMaEligible//keyChestEditionUmid
+
+          distributionStudio: data.distributionStudio ? parseVuduType(data.distributionStudio[0], null) : null,
+          ratingsSummaries: data.ratingsSummaries ? parseVuduType(data.ratingsSummaries[0], null) : null,
+
+          containerIds: data.containerId,
+          // containerId: data.containerId || null,
+          seasonId: data.seasonId && data.seasonId[0],
+          seasonNumber: data.seasonNumber && data.seasonNumber[0],
+          seriesId: data.seriesId && data.seriesId[0],
+          episodeNumberInSeason: data.episodeNumberInSeason ? data.episodeNumberInSeason[0] : null,
+
+          price: "-",
+
           
           // colorType: data.colorType ? data.colorType[0] : null,
-          // 
-          // containerId: data.containerId || null,
-          // contentRating: parseVuduType(data.contentRating[0]),
-          //           
+
+          // contentRating: parseVuduType(data.contentRating[0], null),
+
           // bestDashVideoQuality: data.bestDashVideoQuality[0],
           // bestFlashVideoQuality: data.bestFlashVideoQuality[0],
           // bestLiveStreamVideoQuality: data.bestLiveStreamVideoQuality[0],
@@ -336,26 +460,182 @@ angular.module('app.services', []).
           // 
           // tomatoCertifiedFresh: data.tomatoCertifiedFresh ? data.tomatoCertifiedFresh[0] : null,
           // tomatoIcon: data.tomatoIcon ? data.tomatoIcon[0] : null,
-          // 
-          // ultraVioletLogicalAssetId: data.ultraVioletLogicalAssetId ? data.ultraVioletLogicalAssetId[0] : null,
-          // ultraVioletSyncStatus: data.ultraVioletSyncStatus ? data.ultraVioletSyncStatus[0] : null
-        }
-        
-        item.titleSort = item.title.replace(/^(A|An|The)+\s+/i, '');
+        };
+        item.titleSort = item.title.replace(/^(A|An|The)\s+/i, '');
         if(item.mpaaRating == 'nrFamilyFriendly') item.mpaaRating = 'nrff';
         if(item.releaseTime) item.releaseYear = item.releaseTime.substr(0,4);
-        
+
+        if(contentVariants && contentVariants[contentId])
+        {
+          var contentVariant = contentVariants[contentId];
+          item.videoQuality = contentVariant.videoQuality;
+          item.ultraVioletSyncStatus = contentVariant.ultraVioletSyncStatus;
+        }
+        if(item.haveUV || item.hasUV || item.ultraVioletSyncStatus) item.isUV = "UV";
+
+        if(data.contentVariants)
+        {
+          var cV = parseVuduType(data.contentVariants[0], null);
+          if(cV.price!=0)
+          {
+            item.price = cV.price;
+          }
+          if(!item.bestAvailVideoQuality)
+          {
+            cV = cV.content[item.contentId];
+            if(cV && cV.videoQuality) item.bestAvailVideoQuality = cV.videoQuality;
+          }
+        }
+
+        if(item.type == 'bundle')
+        {
+          item.subitems = [];
+          getBundledTitles(item, contentVariants).then(function(data) {
+            item.subitems = data.content;
+            item.count = item.subitems.length;
+            angular.forEach(item.subitems, function(value, key) {
+              value.parent = item;
+              if(!value.videoQuality)
+              {
+                if(item.videoQuality && value.bestAvailVideoQuality)
+                {
+                  value.videoQuality = videoQualityList[item.videoQuality] > videoQualityList[value.bestAvailVideoQuality] ? value.bestAvailVideoQuality : item.videoQuality;
+                }
+              }
+            });
+          });
+        }
+        else if(item.type == 'episode')
+        {
+          if(item.episodeNumberInSeason)
+          {
+            item.title = item.episodeNumberInSeason + ": " + item.title;
+          }
+        }
+        else if(item.type == 'season')
+        {
+          item.subitems = [];
+          var haveSome = contentVariants[contentId] || (item.parent && contentVariants[item.parent.contentId]);
+          if(item.parent && item.parent.isUV)
+          {
+            item.isUV = "UVbundle";
+          }
+          getSeasonEpisodes(item, contentVariants).then(function(data) {
+            angular.forEach(data.content, function(value, key) {
+              if(item.isUV && value.episodeNumberInSeason!="0" && !value.isUV)//TODO: remove ' && !value.isUV'
+              {
+                value.isUV = "UVseason";
+              }
+              if(!value.videoQuality)
+              {
+                if(item.videoQuality && value.bestAvailVideoQuality)
+                {
+                  value.videoQuality = videoQualityList[item.videoQuality] > videoQualityList[value.bestAvailVideoQuality] ? value.bestAvailVideoQuality : item.videoQuality;
+                }
+                //else if(!item.videoQuality && value.bestAvailVideoQuality)
+                //{
+                //  value.videoQuality = value.bestAvailVideoQuality;
+                //}
+                //else if(item.videoQuality && !value.bestAvailVideoQuality)
+                //{
+                //  value.videoQuality = item.videoQuality;
+                //}
+              }
+              if(haveSome || contentVariants[value.contentId]) item.subitems.push(value);
+            });
+            if(item.parent && !item.subitems.length && item.parent.subitems)
+            {
+//try{
+              item.parent.subitems.splice(item.parent.subitems.indexOf(item), 1);
+//}catch(e){push();}
+            }
+          });
+        }
+        else if(item.type == 'series')
+        {
+          item.subitems = [];
+          var offset = 0;
+          var getTVSeasons = function()
+          {
+            getSeriesSeasons(item, offset, contentVariants).then(function(data) {
+              var oneSeason = data.content[0];
+              oneSeason.parent = item;
+              item.subitems.push(oneSeason);
+
+              if(data.moreBelow)
+              {
+                offset++;
+                getTVSeasons();
+              }
+              //else
+              //{
+              //  item.count = data.subitems.length;
+              //}
+            });
+          };
+          getTVSeasons();
+        }
+
+
+      } else if(data._type == 'contentVariant'){
+        item = {
+          _type: data._type,
+          contentId: data.contentId[0],
+          contentVariantId: data.contentVariantId[0],
+          ultraVioletSyncStatus: data.ultraVioletSyncStatus && data.ultraVioletSyncStatus[0],
+          videoQuality: data.videoQuality[0],
+          price: 0,
+        };
+        angular.forEach(data.offers, function(value, key) {
+          var offer = parseVuduType(value, null);
+          if(item.price < offer.price)
+          {
+            item.price = offer.price;
+          }
+        });
+      } else if(data._type == 'contentVariantList'){
+        item = {
+          _type: data._type,
+          content: {},
+          moreAbove: data.moreAbove[0] == 'true',
+          moreBelow: data.moreBelow[0] == 'true',
+          totalCount: data.totalCount ? data.totalCount[0] : null,
+          price: 0,
+          // zoom: zoomData?
+        };
+        angular.forEach(data.contentVariant, function(value, key) {
+          var contentVariant = parseVuduType(value, null);
+          var cId = contentVariant.contentId;
+          if(item.content[cId])
+          {
+            //item.content[cId].push(contentVariant);
+            console.log("Duplicate contentId: "+cId);
+            ////console.log(contentVariant.videoQuality+" "+item.content[cId].videoQuality);
+            if(videoQualityList[contentVariant.videoQuality] > videoQualityList[item.content[cId].videoQuality])
+            {
+              item.content[cId] = contentVariant;
+            }
+          }
+          else
+          {
+            item.content[cId] = contentVariant;
+          }
+          if(item.price < contentVariant.price)
+          {
+            item.price = contentVariant.price;
+          }
+        });
       } else if(data._type == 'contentList'){
         item = {
           _type: data._type,
           content: [],
-          moreAbove: data.moreAbove[0] == 'true' ? true : false,
-          moreBelow: data.moreBelow[0] == 'true' ? true : false,
+          moreAbove: data.moreAbove[0] == 'true',
+          moreBelow: data.moreBelow[0] == 'true',
           totalCount: data.totalCount[0]
           // zoom: zoomData?
-        }
+        };
         angular.forEach(data.content, function(value, key) {
-          item.content[key] = parseVuduType(value);
+          item.content.push(parseVuduType(value, contentVariants));//[key] = parseVuduType(value);
         });
       } else if(data._type == 'contentRating'){
         item = {
@@ -372,9 +652,9 @@ angular.module('app.services', []).
       } else if(data._type == 'ratingsSummaryList'){
         item = {
           _type: data._type,
-          moreAbove: data.moreAbove[0] == 'true' ? true : false,
-          moreBelow: data.moreBelow[0] == 'true' ? true : false,
-          ratingsSummary: data.ratingsSummary ? parseVuduType(data.ratingsSummary[0]) : null
+          moreAbove: data.moreAbove[0] == 'true',
+          moreBelow: data.moreBelow[0] == 'true',
+          ratingsSummary: data.ratingsSummary ? parseVuduType(data.ratingsSummary[0], null) : null
         }
       } else if(data._type == 'ratingsSummary'){
         item = {
@@ -390,22 +670,38 @@ angular.module('app.services', []).
           name: data.name ? data.name[0] : null,
           studioId: data.studioId ? data.studioId[0] : null
         }
+      } else if(data._type == 'offer'){
+        item = {
+          _type: data._type,
+          //contentId: data.contentId[0],
+          //contentVariantId: data.contentVariantId[0],
+          //isGiftable: data.isGiftable[0],
+          offerId: data.offerId[0],
+          offerType: data.offerType[0],
+          price: parseFloat(data.price[0]),
+        }
+      } else if(data._type == 'offerList'){
+        item = {
+          _type: data._type,
+          price: 0,
+        };
+        angular.forEach(data.offer, function(value, key) {
+          var offer = parseVuduType(value, contentVariants);
+          if(offer.offerType == 'pto' && item.price < offer.price)
+          {
+            item.price = offer.price;
+          }
+        });
+      //} else if(data._type == 'wishList'){//wish
+      //  item = {
+      //    _type: data._type,
+      //    name: data.name ? data.name[0] : null
+      //  }
       }
-      
-      // console.log('item:', item);
-      
-      // console.groupEnd();
-      
       return item;
     };
     
-    var parseVuduResponse = function(response) {
-      // console.log('');
-      // console.log('vuduFactory.parseVuduResponse()');
-      // console.log('response', response);
-      
-      var results = {};
-      
+    var parseVuduResponse = function(response, contentVariants) {
       if(response.data._type == 'error'){
         if(response.data.code && response.data.code[0]){
           response.data = { 
@@ -427,83 +723,18 @@ angular.module('app.services', []).
           };
         }
         return $q.reject(response);
-      } else {
-        results = parseVuduType(response.data);
-        
-        // console.log('');
-        // console.log('results:');
-        // console.log(results);
       }
       
-      return results;
+      return parseVuduType(response.data, contentVariants);
     };
-    
-    // console.groupEnd();
-    
+
     return {
       getTitlesOwned: getTitlesOwned,
+      getTVOwned: getTVOwned,
+      getContentVariantsOwned: getContentVariantsOwned,
+      getWishList: getWishList,
       isAuthenticated: isAuthenticated,
       signIn: sessionKeyRequest,
       signOut: signOut
-    };
-  }).
-  
-  service('vuduService', function($rootScope, $http) {
-    // console.log('');
-    // console.group('vuduService');
-    
-    var url = 'https://api.vudu.com/api2/';
-    var count = '5';
-    
-    var userId = '';
-    // var sessionKey = '';
-    var sessionKey = '';
-        
-    var isAuthenticated = function() {
-      return (sessionKey) ? true : false;
-    };
-    
-    var getTitlesOwned = function() {
-      return $http.jsonp(url, { 
-        params: {
-          claimedAppId: 'fmbb-vudu-collection',
-          format: 'application/json',
-          _type: 'contentSearch',
-          count: count,
-          dimensionality: 'any',
-          followup: ['ratingsSummaries', 'totalCount'],
-          listType: 'rentedOrOwned',
-          offset: '0',
-          sessionKey: sessionKey,
-          sortBy: '-purchaseTime',
-          superType: 'movies',
-          type: 'program',
-          // type: 'bundle',
-          userId: userId,
-          callback: 'JSON_CALLBACK'
-        }
-      }).then(function (response) {
-          // console.log('vuduService.getTitlesOwned():response: ', response);
-          var result = response.data;
-          return result;
-        });
-    };
-    
-    
-    // $rootScope.$on('$routeChangeStart', function(current, next) {
-    //  console.log('');
-    //  console.group('$routeChangeStart');
-    //  
-    //  console.log('current: ', current);
-    //  console.log('next: ', next);
-    //  
-    //  console.groupEnd();
-    // });
-    
-    // console.groupEnd();
-    
-    return {
-      isAuthenticated: isAuthenticated,
-      getTitlesOwned: getTitlesOwned
     };
   });
